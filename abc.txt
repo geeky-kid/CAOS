@@ -1,0 +1,33 @@
+diff -r -u linux-3.16/arch/x86/syscalls/syscall_64.tbl abc/linux-3.16/arch/x86/syscalls/syscall_64.tbl
+--- linux-3.16/arch/x86/syscalls/syscall_64.tbl	2019-09-27 23:10:35.363955763 +0530
++++ abc/linux-3.16/arch/x86/syscalls/syscall_64.tbl	2014-08-04 03:55:02.000000000 +0530
+@@ -323,7 +323,6 @@
+ 314	common	sched_setattr		sys_sched_setattr
+ 315	common	sched_getattr		sys_sched_getattr
+ 316	common	renameat2		sys_renameat2
+-317	common	hello			sys_sh_task_info
+ 
+ #
+ # x32-specific system call numbers start at 512 to avoid cache impact
+Only in linux-3.16/: hello
+diff -r -u linux-3.16/include/linux/syscalls.h abc/linux-3.16/include/linux/syscalls.h
+--- linux-3.16/include/linux/syscalls.h	2019-09-27 23:12:54.467953658 +0530
++++ abc/linux-3.16/include/linux/syscalls.h	2014-08-04 03:55:02.000000000 +0530
+@@ -866,5 +866,4 @@
+ asmlinkage long sys_kcmp(pid_t pid1, pid_t pid2, int type,
+ 			 unsigned long idx1, unsigned long idx2);
+ asmlinkage long sys_finit_module(int fd, const char __user *uargs, int flags);
+-asmlinkage long sys_sh_task_info(int mypid, FILE *f);
+ #endif
+diff -r -u linux-3.16/Makefile abc/linux-3.16/Makefile
+--- linux-3.16/Makefile	2019-09-27 19:24:57.517331794 +0530
++++ abc/linux-3.16/Makefile	2014-08-04 03:55:02.000000000 +0530
+@@ -839,7 +839,7 @@
+ 
+ 
+ ifeq ($(KBUILD_EXTMOD),)
+-core-y		+= kernel/ mm/ fs/ ipc/ security/ crypto/ block/ hello/
++core-y		+= kernel/ mm/ fs/ ipc/ security/ crypto/ block/
+ 
+ vmlinux-dirs	:= $(patsubst %/,%,$(filter %/, $(init-y) $(init-m) \
+ 		     $(core-y) $(core-m) $(drivers-y) $(drivers-m) \
