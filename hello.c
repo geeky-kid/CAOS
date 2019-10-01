@@ -12,41 +12,39 @@ asmlinkage long sys_sh_task_info(int mypid, char *fname){
 	struct file *f;
 	int d;
 	char str[1000], cat[200];
+	loff_t pos=0;
+	mm_segment_t old_fs = get_fs();
+  	set_fs(KERNEL_DS);
 	d=sys_open(fname, O_WRONLY|O_CREAT, 0644);
 	for_each_process(task){
 		if(task->pid == mypid){
-			printk("Process: %s\n", task->comm);
-			strcpy(data, "Process: ");
-			strcat(data, task->comm);
-			strcat(data, "\n");
+			printk("%s\n", task->comm);
+			strcpy(str, "Process: ");
+			strcat(str, task->comm);
+			strcat(str, "\n");
 			
-			printk("PID Number: %ld\n", (long)task->pid);
-			strcat(data, "PID NUmber: ");
+			printk("%ld\n", (long)task->pid);
+			strcat(str, "PID NUmber: ");
 			sprintf(cat, "%ld\n", (long)task->pid);
-			strcat(data, cat);
+			strcat(str, cat);
 			
-			printk("Process State: %ld\n", (long)task->state);
-			strcat(data, "Process State: ");
+			printk("%ld\n", (long)task->state);
+			strcat(str, "Process State: ");
 			sprintf(cat, "%ld\n", (long)task->state);
-			strcat(data, cat);
+			strcat(str, cat);
 			
-			printk("Priority: %ld\n", (long)task->prio);
-			strcat(data, "Priority: ");
+			printk("%ld\n", (long)task->prio);
+			strcat(str, "Priority: ");
 			sprintf(cat, "%ld\n", (long)task->prio);
-			strcat(data, cat);
+			strcat(str, cat);
 			
 			if(d<0){
 				return -EISDIR
 			}
 			f=fget(d);
-			f->f_op->write(f, data, strlen(data), &f->f_pos);
+			f->f_op->write(f, str, strlen(str), &f->f_pos);
 		}
 	}
-// 	task=pid_task(find_vpid(mypid), PIDTYPE_PID);
-// 	f=fopen("file.txt","w+");
-// 	fprintf(f,"%s", task->comm);
-// 	fprintf(f,"%d", task->pid);
-// 	fprintf(f,"%l", task->state);
-// 	fprintf(f,"%l", task->priority);
-// 	fclose(f);
+	set_fs(old_fs);
+	return 0;
 }
